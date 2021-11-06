@@ -1,4 +1,5 @@
 import pygame
+from nlc_dino_runner.components.dinosaurio import Dinosaurio
 from ..utils.constants import (
     TITLE,
     ICON,
@@ -21,6 +22,7 @@ class Game:
         self.y_position_initial = 400
         self.game_speed = 20
         self.clock = pygame.time.Clock()
+        self.player = Dinosaurio()
 
     def run(self):
         self.playing = True
@@ -36,11 +38,13 @@ class Game:
                 self.playing = False
 
     def update(self):
-        pass
+        user_input = pygame.key.get_pressed()
+        self.player.update(user_input)
 
     def draw(self):
         self.clock.tick(FPS)
         self.screen.fill((255, 255, 255))
+        self.player.draw(self.screen)
         self.draw_bakcground()
         pygame.display.flip()
 
