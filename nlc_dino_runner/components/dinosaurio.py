@@ -2,6 +2,7 @@ import pygame
 from pygame.sprite import Sprite
 from nlc_dino_runner.utils.constants import RUNNING, DUCKING, JUMPING
 
+
 class Dinosaurio(Sprite):
     X_POS = 80
     Y_POS = 320
@@ -11,8 +12,8 @@ class Dinosaurio(Sprite):
     def __init__(self):
         self.image = RUNNING[0]
         self.dino_rect = self.image.get_rect()
-        self.dino_rect_x = self.X_POS
-        self.dino_rect_y = self.Y_POS
+        self.dino_rect.x = self.X_POS
+        self.dino_rect.y = self.Y_POS
         self.stop_index = 0
         self.dino_run = True
         self.dino_duck = False
@@ -44,31 +45,28 @@ class Dinosaurio(Sprite):
             self.stop_index = 0
 
     def draw(self, screen):
-        screen.blit(self.image, (self.dino_rect_x, self.dino_rect_y))
+        screen.blit(self.image, self.dino_rect)
 
     def run(self):
         self.image = RUNNING[0] if self.stop_index < 5 else RUNNING[1]
         self.dino_rect = self.image.get_rect()
-        self.dino_rect_x = self.X_POS
-        self.dino_rect_y = self.Y_POS
+        self.dino_rect.x = self.X_POS
+        self.dino_rect.y = self.Y_POS
         self.stop_index += 1
 
     def duck(self):
         self.image = DUCKING[0] if self.stop_index < 5 else DUCKING[1]
         self.dino_rect = self.image.get_rect()
-        self.dino_rect_x = self.X_POS
-        self.dino_rect_y = self.Y_POS_DUCK
+        self.dino_rect.x = self.X_POS
+        self.dino_rect.y = self.Y_POS_DUCK
         self.stop_index += 1
 
     def jump(self):
         self.image = JUMPING
         if self.dino_jump:
-            self.dino_rect_y -= self.jump_vel * 4
+            self.dino_rect.y -= self.jump_vel * 4
             self.jump_vel -= 1
-
         if self.jump_vel < -self.JUMP_VEL:
-            self.dino_rect_y = self.Y_POS
+            self.dino_rect.y = self.Y_POS
             self.dino_jump = False
             self.jump_vel = self.JUMP_VEL
-
-
