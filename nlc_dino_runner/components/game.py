@@ -1,5 +1,9 @@
 import pygame
+
+from nlc_dino_runner.components.dino_lives.hearth import Heart
+from nlc_dino_runner.components.powerups.power_up_manager import PowerUpManager
 from nlc_dino_runner.utils.text_utils import get_score_element, get_centered_message
+from nlc_dino_runner.components.powerups.hammer_tool_manager import HammerToolManager
 from nlc_dino_runner.components.dinosaurio import Dinosaurio
 from nlc_dino_runner.components.obstaculos.obstacle_manager import ObstacleManager
 from nlc_dino_runner.utils.constants import (
@@ -21,10 +25,13 @@ class Game:
         self.playing = False
         self.x_position_initial = 0
         self.y_position_initial = 400
-        self.game_speed = 20
+        self.game_speed = 10
         self.clock = pygame.time.Clock()
         self.player = Dinosaurio()
         self.obstacle_manager = ObstacleManager()
+        self.power_up_manager = PowerUpManager()
+        self.hammer_tool_manager = HammerToolManager()
+        self.dino_lives = Heart()
         self.points = 0
         self.death_count = 0
 
@@ -46,6 +53,8 @@ class Game:
         user_input = pygame.key.get_pressed()
         self.player.update(user_input)
         self.obstacle_manager.update(self)
+        self.hammer_tool_manager.update(user_input, self)
+        self.power_up_manager.update(self.points, self.game_speed, self)
 
     def draw(self):
         self.clock.tick(FPS)
@@ -54,6 +63,10 @@ class Game:
         self.player.draw(self.screen)
         self.obstacle_manager.draw(self.screen)
         self.score()
+        self.power_up_manager.draw(self.screen)
+        pygame.display.flip()
+        self.dino_lives.draw(self.screen)
+        self.hammer_tool_manager.draw(self.screen)
         pygame.display.update()
         pygame.display.flip()
 
@@ -102,8 +115,10 @@ class Game:
 
     def score(self):
         self.points += 1
-        if self.points % 20 == 0:
+        if self.points % 50 == 0 and self.points <= 2000:
             self.game_speed += 1
+
         score_element, score_element_rect = get_score_element(self.points)
         self.screen.blit(score_element, score_element_rect)
+        self.player.check_invincibility(self.screen)
 
